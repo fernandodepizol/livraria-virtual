@@ -1,6 +1,8 @@
 package br.com.uniciv.rest.livraria;
 
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -30,7 +32,13 @@ public class LivroResource {
 		}catch (LivroNaoEncontradoException e) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
-		
 	}
 	
+	@POST
+	@Consumes(MediaType.APPLICATION_XML)
+	public Livro criaLivro(Livro livro) {
+		livroRepo.adicionaLivro(livro);
+		return livro;
+	}
+		
 }
