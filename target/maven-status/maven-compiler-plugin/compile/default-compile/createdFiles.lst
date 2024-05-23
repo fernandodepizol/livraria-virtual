@@ -1,0 +1,7 @@
+br\com\uniciv\rest\livraria\LivroRepositorio.class
+br\com\uniciv\rest\livraria\Autor.class
+br\com\uniciv\rest\livraria\heroku\Main.class
+br\com\uniciv\rest\livraria\Livros.class
+br\com\uniciv\rest\livraria\Livro.class
+br\com\uniciv\rest\livraria\LivroResource.class
+br\com\uniciv\rest\livraria\MyResource.class
