@@ -9,7 +9,16 @@ public class LivroRepositorio {
 
 	private Map<Long, Livro> livros = new HashMap<>();
 	
-	public LivroRepositorio() {
+	private static LivroRepositorio repo;
+	
+	public static LivroRepositorio getInstance(){
+		if(repo == null) {
+			repo = new LivroRepositorio();
+		}
+		return repo;
+	}
+	
+	private LivroRepositorio() {
 		Livro livro1= new Livro(1L, "Livro A", "ISBN-1234", "Genero A", 23.99, "Autor1");
 		Livro livro2= new Livro(2L, "Livro B", "ISBN-4321", "Genero B", 23.99, "Autor2");
 		Livro livro3= new Livro(3L, "Livro C", "ISBN-1324", "Genero C", 23.99, "Autor1");
@@ -32,6 +41,13 @@ public class LivroRepositorio {
 	}
 	
 	public void adicionaLivro(Livro livro) {
+		if(livros.containsKey(livro.getId())) {
+			throw new LivroExistenteException();
+		}
+		livros.put(livro.getId(), livro);
+	}
+	
+	public void atualizaLivro(Livro livro) {
 		livros.put(livro.getId(), livro);
 	}
 }
