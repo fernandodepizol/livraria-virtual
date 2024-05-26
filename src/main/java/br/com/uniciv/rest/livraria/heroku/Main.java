@@ -1,7 +1,18 @@
 package br.com.uniciv.rest.livraria.heroku;
 
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
+import org.eclipse.jetty.server.internal.HttpConnection;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
+
+import java.io.File;
+
 import org.eclipse.jetty.ee10.webapp.WebAppContext;
+import org.eclipse.jetty.http.HttpVersion;
 
 /**
  * This class launches the web application in an embedded Jetty container. This is the entry point to your application. The Java
@@ -10,14 +21,49 @@ import org.eclipse.jetty.ee10.webapp.WebAppContext;
 public class Main {
 
     public static void main(String[] args) throws Exception{
+    	
+    	File keyStoreFile = new File("server.keystore");
+    	final Server server = new Server();
+    	
+    	HttpConfiguration httpConfig = new HttpConfiguration();
+    	httpConfig.setSecureScheme("https");
+    	httpConfig.setSecurePort(8443);
+		
+    	
+    	/**
+    	 * Foi necessário adicionar para remover a segurança SNI que não funciona localmente.
+		*/
+    	SecureRequestCustomizer src = new SecureRequestCustomizer();
+    	src.setSniHostCheck(false);
+    	httpConfig.addCustomizer(src);
+    	
+    	ServerConnector http = new ServerConnector(server, new HttpConnectionFactory(httpConfig));
+    	http.setPort(8080);
+    	
+    	SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
+    	sslContextFactory.setKeyStorePath(keyStoreFile.getAbsolutePath());
+    	sslContextFactory.setKeyStorePassword("livraria");
+    	sslContextFactory.setKeyManagerPassword("livraria");
+    	
+    	HttpConfiguration httpsConfig = new HttpConfiguration(httpConfig);
+    	ServerConnector https = new ServerConnector(server, 
+    			new SslConnectionFactory(sslContextFactory, 
+    				HttpVersion.HTTP_1_1.asString()), 
+    			new HttpConnectionFactory(httpsConfig));
+    	
+    	https.setPort(8443);
+    	
+    	server.setConnectors(new ServerConnector[] {http, https});
+    	
+    	/* Código antes de adicionar o ssl - verificar no commit do eclipse.
         // The port that we should run on can be set into an environment variable
         // Look for that variable and default to 8080 if it isn't there.
         String webPort = System.getenv("PORT");
         if (webPort == null || webPort.isEmpty()) {
             webPort = "8080";
         }
-
-        final Server server = new Server(Integer.valueOf(webPort));
+        */
+        
         final WebAppContext root = new WebAppContext();
 
         root.setContextPath("/livraria-virtual");
