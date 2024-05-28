@@ -6,13 +6,29 @@ import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.internal.HttpConnection;
+import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.util.resource.ResourceFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
-import java.io.File;
+import jakarta.servlet.annotation.ServletSecurity.EmptyRoleSemantic;
+import jakarta.servlet.annotation.ServletSecurity.TransportGuarantee;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.net.URI;
+import java.nio.file.Path;
+import java.util.Arrays;
+
+import org.eclipse.jetty.ee10.servlet.security.ConstraintMapping;
+import org.eclipse.jetty.ee10.servlet.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.ee10.webapp.WebAppContext;
 import org.eclipse.jetty.http.HttpVersion;
+import org.eclipse.jetty.security.Constraint;
+import org.eclipse.jetty.security.HashLoginService;
+import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 
 /**
  * This class launches the web application in an embedded Jetty container. This is the entry point to your application. The Java
@@ -77,10 +93,41 @@ public class Main {
         final String webappDirLocation = "src/main/webapp/";
         root.setDescriptor(webappDirLocation + "/WEB-INF/web.xml");
         root.setBaseResourceAsString(webappDirLocation);
+        
+        /**
+         * Implementando autenticação e autorização de usuário
+         * */
+        HashLoginService loginService = new HashLoginService("MyRealm");
+       
+        
+        ResourceHandler rh = new ResourceHandler();
+        Resource base = ResourceFactory.of(rh).newResource("./myrealm.properties");
 
-        server.setHandler(root);
+        loginService.setConfig(base);
+		
+        
+        server.addBean(loginService);
+        
+        String[] roles = new String[] {"admin","user"};
+        
+        Constraint constraint = new ConstraintSecurityHandler().createConstraint("auth",roles,EmptyRoleSemantic.PERMIT,TransportGuarantee.CONFIDENTIAL);
+       
+        ConstraintMapping mapping = new ConstraintMapping();
+        mapping.setPathSpec("/*");
+        mapping.setConstraint(constraint);
+        
+        ConstraintSecurityHandler security = new ConstraintSecurityHandler();
+        server.setHandler(security);
+        
+        security.setConstraintMappings(Arrays.asList(mapping));
+        security.setAuthenticator(new BasicAuthenticator());
+        security.setLoginService(loginService);      
+        
+        
+        security.setHandler(root);
 
         server.start();
         server.join();
     }
+    
 }
