@@ -1,7 +1,10 @@
 C:\dev\workspace\livraria-vritual\src\main\java\br\com\uniciv\rest\livraria\LivroRepositorio.java
 C:\dev\workspace\livraria-vritual\src\main\java\br\com\uniciv\rest\livraria\MyResource.java
+C:\dev\workspace\livraria-vritual\src\main\java\br\com\uniciv\rest\livraria\LivroNaoEncontradoException.java
 C:\dev\workspace\livraria-vritual\src\main\java\br\com\uniciv\rest\livraria\Livro.java
 C:\dev\workspace\livraria-vritual\src\main\java\br\com\uniciv\rest\livraria\heroku\Main.java
+C:\dev\workspace\livraria-vritual\src\main\java\br\com\uniciv\rest\livraria\ItemBusca.java
 C:\dev\workspace\livraria-vritual\src\main\java\br\com\uniciv\rest\livraria\LivroResource.java
 C:\dev\workspace\livraria-vritual\src\main\java\br\com\uniciv\rest\livraria\Livros.java
 C:\dev\workspace\livraria-vritual\src\main\java\br\com\uniciv\rest\livraria\Autor.java
+C:\dev\workspace\livraria-vritual\src\main\java\br\com\uniciv\rest\livraria\LivroExistenteException.java

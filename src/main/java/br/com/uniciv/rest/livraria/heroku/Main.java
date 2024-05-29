@@ -108,10 +108,15 @@ public class Main {
         
         server.addBean(loginService);
         
+        
         String[] roles = new String[] {"admin","user"};
         
-        Constraint constraint = new ConstraintSecurityHandler().createConstraint("auth",roles,EmptyRoleSemantic.PERMIT,TransportGuarantee.CONFIDENTIAL);
+        
+        
        
+        Constraint constraint = new ConstraintSecurityHandler().createConstraint("auth",roles,EmptyRoleSemantic.PERMIT,TransportGuarantee.CONFIDENTIAL);
+    
+        
         ConstraintMapping mapping = new ConstraintMapping();
         mapping.setPathSpec("/*");
         mapping.setConstraint(constraint);
